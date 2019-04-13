@@ -135,6 +135,7 @@ export default {
     mostrarOpcionesDePeliculas: function(){
       this.opcionesDePeliculas=true;
       this.opcionesDeActores=false;
+      this.movies = []
     },
     ordenarMovieReciente: function(){
       let vector = this.movies
