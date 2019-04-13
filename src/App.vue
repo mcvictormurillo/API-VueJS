@@ -1,8 +1,44 @@
 <template>
 
-  <div id="app">
-    <div class="container row ">
-      <div class="input-group mb-3 col-5 ">
+  <div id="app" class="container-fluid">
+      <!-- HEADER NAV BAR-->
+     <nav id="header" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-bran   d" href="#">
+                <img src="src/assets/video-camera (1).png" class="mr-3" alt="logo"> Movies
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a @click="mostrarOpcionesDePeliculas" class="nav-link" href="#main">Colecciones de Peliculas <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a @click="mostrarOpcionesDeActores" class="nav-link" href="#buscarPorActor">Actores</a>
+                    </li> 
+                    <li class="nav-item">
+                        <a class="nav-link" href="#generos">Generos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#conviertete-en-orador">Mas</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+<!--/HEADER NAV -->
+
+
+
+<div class="row mt-8">
+  <div   class="container row mt-10 ">
+      <div v-if="opcionesDePeliculas" class="input-group mb-3 col-5 offset-1 ">
         <div class="input-group-prepend">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="sr-only">Toggle Dropdown</span>
@@ -18,10 +54,18 @@
       </div>
       <input :placeholder="listaPeliculas"  type="text" class="form-control " aria-label="Text input with segmented dropdown button" disabled>
      </div>
-     <div class="input-group mb-3 col-5 ">
+
+     <div  v-if="opcionesDePeliculas" class="input-group mb-3 col-4 ">
         <input v-model="searchMovie" type="text" class="form-control" placeholder="Nombre de la pelicula" aria-label="Recipient's username" aria-describedby="basic-addon2">
         <div class="input-group-append">
           <span @click="getSearchMovie"  class="input-group-text" id="basic-addon2">Buscar</span>
+        </div>
+      </div>
+
+      <div  v-if="opcionesDeActores" class="input-group mb-3 col-4 offset-4 ">
+        <input v-model="searchActor" type="text" class="form-control" placeholder="Nombre de la pelicula" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+          <span @click="getDataActor"  class="input-group-text" id="basic-addon2">Buscar</span>
         </div>
       </div>
 
@@ -40,16 +84,26 @@
      
   </div>
 
-    <div id="lita-peliculas-populares" class="row">
+    <div v-if="opcionesDePeliculas" class="row ">
       <movie v-for="movie in movies" :key="movie.id" :movie="movie" :urlImage="urlImage"></movie>
     </div>
   </div>
 
+  <div class="container">
+    <div v-if="opcionesDeActores" class="row">
+      <movie v-for="movie in movies" :key="movie.id" :movie="movie" :urlImage="urlImage"></movie>
+      <div class="row">
+        <actor v-for="(actor,index ) in actores" :pelicuasDeActor="pelicuasDeActor" :key="actor.id" :actor="actor" :index="index" :urlImage="urlImage" ></actor>
+      </div>
+    </div>
+  </div>
+</div>
 </template>
 <script>
 
 import getData from './api/index'
 import Movie from './components/Movie.vue'
+import Actor from './components/Actor.vue'
 import selectMovies from './components/SelectSearch.vue'
 import config from './api/config'
 export default {
@@ -58,15 +112,30 @@ export default {
     return {
       listaPeliculas:'Selecciona una coleccion de peliculas...',
       movies:[],
+      actores:[],
       urlImage:config.UrlImage,
-      searchMovie:''
+      urlActor:config.UrlSearchActor,
+      searchMovie:'',
+      searchActor:'',
+      opcionesDePeliculas:true,
+      opcionesDeActores:false
     }
   },
   components:{
     Movie,
-    selectMovies
+    selectMovies,
+    Actor
   },
   methods:{
+    mostrarOpcionesDeActores: function(){
+      this.opcionesDePeliculas=false;
+      this.opcionesDeActores=true;
+      this.movies=[]
+    },
+    mostrarOpcionesDePeliculas: function(){
+      this.opcionesDePeliculas=true;
+      this.opcionesDeActores=false;
+    },
     ordenarMovieReciente: function(){
       let vector = this.movies
       this.movies = []
@@ -118,7 +187,7 @@ export default {
         break;
         case 'np': url = config.UrlNinos
         break;
-        case 'mp': url = config.UrlDrama
+        case 'da': url = config.UrlDrama
         break;
       }
       console.log(url)
@@ -127,6 +196,22 @@ export default {
         self.movies = data
       })
       
+    },
+
+    getDataActor: function(){
+      let url = this.urlActor.replace(':movie',this.searchActor)
+      self = this
+      self.movies=[]
+      getData(url).then(function(data){
+        self.actores = data
+        console.log(data)
+      })
+    },
+    pelicuasDeActor: function(event){
+      this.movies=[]
+      console.log(event.target.id)
+      this.movies = this.actores[parseInt(event.target.id)].known_for
+      console.log(this.movies)
     }
 
   }
@@ -135,6 +220,15 @@ export default {
 
 <style>
 #app{
+  padding-right: 0px;
+  padding-left: 0px;
+  margin-bottom: 50px;
+}
+
+nav{
+ margin-bottom: 50px;
+}
+.mar-top{
   margin-top:50px;
 }
 </style>
