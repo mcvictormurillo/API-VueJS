@@ -85,7 +85,7 @@
   </div>
 
     <div v-if="opcionesDePeliculas" class="row ">
-      <movie v-for="movie in movies" :key="movie.id" :movie="movie" :urlImage="urlImage"></movie>
+      <movie v-for="movie in movies" :generos="movie.genre_ids | mostrarGenero" :key="movie.id" :movie="movie" :urlImage="urlImage"></movie>
     </div>
   </div>
 
@@ -106,6 +106,7 @@ import Movie from './components/Movie.vue'
 import Actor from './components/Actor.vue'
 import selectMovies from './components/SelectSearch.vue'
 import config from './api/config'
+const generos = config.GENEROS
 export default {
   name: 'app',
   data () {
@@ -125,6 +126,22 @@ export default {
     Movie,
     selectMovies,
     Actor
+  },
+  filters:{
+    mostrarGenero: function(vector){
+      
+      var listGeneros=''
+      var count=0
+      for(let index=0; index<generos.length; index++ ){
+        
+        if(generos[index].id === parseInt(vector[count])){
+         
+          listGeneros+= ` ${ generos[index].name },`
+          count+=1
+        }
+      }
+      return listGeneros.substring(0,listGeneros.length-1)
+    }
   },
   methods:{
     mostrarOpcionesDeActores: function(){
@@ -178,7 +195,8 @@ export default {
     },
 
     getDataMovies: function(event){
-      console.log(event.target.text)
+      
+      //console.log(event.target.text)
       this.listaPeliculas = event.target.text
       let url = ''
       switch(event.target.id){
@@ -195,6 +213,7 @@ export default {
       self = this
       getData(url).then(function(data){
         self.movies = data
+        //self.mostrarGenero(data[0].genre_ids)
       })
       
     },
@@ -213,10 +232,12 @@ export default {
       console.log(event.target.id)
       this.movies = this.actores[parseInt(event.target.id)].known_for
       console.log(this.movies)
-    }
+    },
+    
 
   }
 }
+
 </script>
 
 <style>
