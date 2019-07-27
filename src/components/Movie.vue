@@ -10,10 +10,8 @@
                     <h5 class="card-title">{{movie.original_title}}</h5>
                     <p class="card-text">{{movie.overview}}</p>
                     <p id="parrafo" class="card-text">{{movie.popularity}}</p>
-                    <p id="parrafo" class="card-text">{{generos}}</p>
+                    <p><span class="badge badge-danger">{{generos}}</span></p>
                     <small class="card-text">{{movie.release_date}}</small>
-                    
-
                 </div>
             </div>
         </div>

@@ -1,8 +1,8 @@
 <template>
-
   <div id="app" class="container-fluid">
-      <!-- HEADER NAV BAR-->
-     <nav id="header" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+
+   <!-- HEADER NAV BAR-->
+    <nav id="header" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
             <a class="navbar-bran   d" href="#">
                 <img src="src/assets/video-camera (1).png" class="mr-3" alt="logo"> Movies
@@ -21,7 +21,7 @@
                         <a @click="mostrarOpcionesDeActores" class="nav-link" href="#buscarPorActor">Actores</a>
                     </li> 
                     <li class="nav-item">
-                        <a class="nav-link" href="#generos">Generos</a>
+                        <a @click="mostrarOpcionesDeGeneros" class="nav-link" href="#generos">Generos</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#conviertete-en-orador">Mas</a>
@@ -29,75 +29,93 @@
                 </ul>
             </div>
         </div>
-    </nav>
-
-
-<!--/HEADER NAV -->
+    </nav>   
+  <!--/HEADER NAV -->
 
 
 
-<div class="row mt-8">
-  <div   class="container row mt-10 ">
-      <div v-if="opcionesDePeliculas" class="input-group mb-3 col-5 offset-1 ">
-        <div class="input-group-prepend">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <div class="dropdown-menu">
-          <a @click="getDataMovies" id="mp" class="dropdown-item" href="#">Mas populares</a>
-          <a @click="getDataMovies" id="cr" class="dropdown-item" href="#">Mejor valoradas con clasificación R</a>
-          <a @click="getDataMovies" id="np" class="dropdown-item" href="#">Para niños más populares</a>
-          <a @click="getDataMovies" id="da" class="dropdown-item" href="#">Mejores dramas que se estrenaron este año</a>
-          <div role="separator" class="dropdown-divider"></div>
-          <a @click="getDataMovies" id="mp" class="dropdown-item" href="#">Separated link</a>
+    <div>
+
+      <!-- OPCIONES DE BUSQUEDAS DE PELICULAS -->
+      <div class=" container ">
+        <div v-if="opcionesDePeliculas" class="row ">
+        <div  class="input-group col-md-5 offset-1 ">
+            <div class="input-group-prepend">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu">
+              <a @click="getDataMovies" id="mp" class="dropdown-item" >Mas populares</a>
+              <a @click="getDataMovies" id="cr" class="dropdown-item" >Mejor valoradas con clasificación R</a>
+              <a @click="getDataMovies" id="np" class="dropdown-item" >Para niños más populares</a>
+              <a @click="getDataMovies" id="da" class="dropdown-item" >Mejores dramas que se estrenaron este año</a>
+              <div role="separator" class="dropdown-divider"></div>
+              <a @click="getDataMovies" id="mp" class="dropdown-item" href="#">Separated link</a>
+            </div>
+            </div>
+          <input :placeholder="listaPeliculas"  type="text" class="form-control " aria-label="Text input with segmented dropdown button" disabled>
         </div>
-      </div>
-      <input :placeholder="listaPeliculas"  type="text" class="form-control " aria-label="Text input with segmented dropdown button" disabled>
-     </div>
 
-     <div  v-if="opcionesDePeliculas" class="input-group mb-3 col-4 ">
-        <input v-model="searchMovie" type="text" class="form-control" placeholder="Nombre de la pelicula" aria-label="Recipient's username" aria-describedby="basic-addon2">
-        <div class="input-group-append">
-          <span @click="getSearchMovie"  class="input-group-text" id="basic-addon2">Buscar</span>
-        </div>
+          <div class="input-group  col-md-4 ">
+            <input v-model="searchMovie" type="text" class="form-control" placeholder="Nombre de la pelicula" aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              <span @click="getSearchMovie"  class="input-group-text">Buscar</span>
+            </div>
+          </div>
+
+          <div  class="input-group col-md-2 ">
+            <div class="input-group-prepend">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu">
+              <a @click="ordenarMovieReciente" class="dropdown-item" href="#">Mas recientes</a>
+              <a @click="ordenarMoviePopular" class="dropdown-item" href="#">Mayor popularidad</a>
+            </div>
+            </div>
+            <input placeholder="Filtrar "  type="text" class="form-control" aria-label="Text input with segmented dropdown button" disabled>
+          </div>
       </div>
 
-      <div  v-if="opcionesDeActores" class="input-group mb-3 col-4 offset-4 ">
-        <input v-model="searchActor" type="text" class="form-control" placeholder="Nombre de la pelicula" aria-label="Recipient's username" aria-describedby="basic-addon2">
-        <div class="input-group-append">
-          <span @click="getDataActor"  class="input-group-text" id="basic-addon2">Buscar</span>
-        </div>
-      </div>
 
-      <div class="input-group mb-3 col-2 ">
-        <div class="input-group-prepend">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <div class="dropdown-menu">
-          <a @click="ordenarMovieReciente" class="dropdown-item" href="#">Mas recientes</a>
-          <a @click="ordenarMoviePopular" class="dropdown-item" href="#">Mayor popularidad</a>
-        </div>
-      </div>
-      <input placeholder="Filtrar.."  type="text" class="form-control" aria-label="Text input with segmented dropdown button" disabled>
-     </div>
-     
-  </div>
+    
+          <div  v-if="opcionesDeActores" class="input-group  col-md-4 offset-4 ">
+            <input v-model="searchActor" type="text" class="form-control" placeholder="Nombre de la pelicula" aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              <span @click="getDataActor"  class="input-group-text">Buscar</span>
+            </div>
+          </div>
 
-    <div v-if="opcionesDePeliculas" class="row ">
-      <movie v-for="movie in movies" :generos="movie.genre_ids | mostrarGenero" :key="movie.id" :movie="movie" :urlImage="urlImage"></movie>
+         
+        
+      </div>
+      <!-- / OPCIONES DE BUSQUEDAS DE PELICULAS -->
+
+      <!-- OPCIONES DE BUSQUEDAS PARA ACTORES-->
+      <div v-if="opcionesDePeliculas" class="row ">
+        <movie v-for="movie in movies" :generos="movie.genre_ids | mostrarGenero" :key="movie.id" :movie="movie" :urlImage="urlImage"></movie>
+      </div>
+      <!-- /OPCIONES DE BUSQUEDAS PARA ACTORES-->
     </div>
+
+      <div class="container">
+        <div v-if="opcionesDeActores" class="row">
+          <movie v-for="movie in movies" :key="movie.id" :movie="movie" :urlImage="urlImage"></movie>
+          <div class="row">
+            <actor v-for="(actor,index ) in actores" :pelicuasDeActor="pelicuasDeActor" :key="actor.id" :actor="actor" :index="index" :urlImage="urlImage" ></actor>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="opcionesGeneros" class="container">
+        <div class="row">
+          <generos v-for="g in dataGeneros" :key="g.id" :generos="g"></generos>
+        </div>
+      </div>
+
+
   </div>
 
-  <div class="container">
-    <div v-if="opcionesDeActores" class="row">
-      <movie v-for="movie in movies" :key="movie.id" :movie="movie" :urlImage="urlImage"></movie>
-      <div class="row">
-        <actor v-for="(actor,index ) in actores" :pelicuasDeActor="pelicuasDeActor" :key="actor.id" :actor="actor" :index="index" :urlImage="urlImage" ></actor>
-      </div>
-    </div>
-  </div>
-</div>
 </template>
 <script>
 
@@ -106,7 +124,9 @@ import Movie from './components/Movie.vue'
 import Actor from './components/Actor.vue'
 import selectMovies from './components/SelectSearch.vue'
 import config from './api/config'
-const generos = config.GENEROS
+import Generos from './components/Generos.vue';
+
+
 export default {
   name: 'app',
   data () {
@@ -119,24 +139,27 @@ export default {
       searchMovie:'',
       searchActor:'',
       opcionesDePeliculas:true,
-      opcionesDeActores:false
+      opcionesDeActores:false,
+      opcionesGeneros:false,
+      dataGeneros : config.GENEROS
     }
   },
   components:{
     Movie,
     selectMovies,
-    Actor
+    Actor,
+    Generos
   },
   filters:{
     mostrarGenero: function(vector){
       
       var listGeneros=''
       var count=0
-      for(let index=0; index<generos.length; index++ ){
+      for(let index=0; index<this.dataGeneros.length; index++ ){
         
-        if(generos[index].id === parseInt(vector[count])){
+        if(this.dataGeneros[index].id === parseInt(vector[count])){
          
-          listGeneros+= ` ${ generos[index].name },`
+          listGeneros+= ` ${ this.dataGeneros[index].name },`
           count+=1
         }
       }
@@ -144,6 +167,12 @@ export default {
     }
   },
   methods:{
+    mostrarOpcionesDeGeneros: function(){
+      this.opcionesGeneros = true;
+      this.opcionesDePeliculas=false;
+      this.opcionesDeActores=false;
+      this.movies=[]
+    },
     mostrarOpcionesDeActores: function(){
       this.opcionesDePeliculas=false;
       this.opcionesDeActores=true;
